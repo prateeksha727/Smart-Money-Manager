@@ -1,0 +1,80 @@
+<UserControl x:Class="SmartMoneyManager.Views.BudgetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:SmartMoneyManager.Converters">
+    <UserControl.Resources>
+        <conv:PercentToColorConverter x:Key="PctColor"/>
+    </UserControl.Resources>
+    <Grid Margin="24" Background="{StaticResource BgDark}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Form -->
+        <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,14,0" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Text="Set Budget" FontSize="15" FontWeight="SemiBold"
+                           Foreground="{StaticResource TxtPrimary}" Margin="0,0,0,18"/>
+                <TextBlock Text="CATEGORY" Style="{StaticResource TxtLabel}"/>
+                <ComboBox Style="{StaticResource CmbBox}" ItemsSource="{Binding Categories}"
+                          SelectedItem="{Binding SelCategory}" DisplayMemberPath="Name" Margin="0,0,0,12"/>
+                <TextBlock Text="MONTHLY LIMIT ($)" Style="{StaticResource TxtLabel}"/>
+                <TextBox Style="{StaticResource TxtBox}"
+                         Text="{Binding LimitText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,18"/>
+                <Button Content="Save Budget" Style="{StaticResource BtnPrimary}" Command="{Binding SaveCmd}" Height="40"/>
+                <Button Content="Delete Selected" Style="{StaticResource BtnDanger}"
+                        Command="{Binding DeleteCmd}" Margin="0,8,0,0" Height="36"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Budget cards -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Budgets}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SmallCard}" Width="230" Margin="0,0,14,14">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding CategoryIcon}" FontSize="22" Margin="0,0,10,0"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding CategoryName}"
+                                                   Foreground="{StaticResource TxtPrimary}"
+                                                   FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   Foreground="{Binding PercentUsed, Converter={StaticResource PctColor}}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <!-- Standard ProgressBar — works reliably -->
+                                <ProgressBar Value="{Binding PercentUsed, Mode=OneWay}" Minimum="0" Maximum="100"
+                                             Style="{StaticResource PBar}"
+                                             Foreground="{Binding PercentUsed, Converter={StaticResource PctColor}}"/>
+                                <Grid Margin="0,8,0,0">
+                                    <TextBlock Foreground="{StaticResource TxtSecondary}" FontSize="12">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="Spent: ₹{0:0.00}">
+                                                <Binding Path="Spent"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource TxtSecondary}" FontSize="12"
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="Limit: ₹{0:0.00}">
+                                                <Binding Path="MonthlyLimit"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

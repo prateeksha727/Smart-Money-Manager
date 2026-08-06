@@ -1,0 +1,113 @@
+<UserControl x:Class="SmartMoneyManager.Views.SavingsGoalsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:SmartMoneyManager.Converters">
+    <UserControl.Resources>
+        <conv:EditLabelConverter x:Key="EditLabel"/>
+    </UserControl.Resources>
+    <Grid Margin="24" Background="{StaticResource BgDark}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="290"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,14,0" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Text="Add / Edit Goal" FontSize="15" FontWeight="SemiBold"
+                           Foreground="{StaticResource TxtPrimary}" Margin="0,0,0,18"/>
+
+                <TextBlock Text="GOAL NAME" Style="{StaticResource TxtLabel}"/>
+                <TextBox Style="{StaticResource TxtBox}"
+                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                <TextBlock Text="ICON" Style="{StaticResource TxtLabel}"/>
+                <ComboBox Style="{StaticResource CmbBox}" ItemsSource="{Binding Icons}"
+                          SelectedItem="{Binding Icon}" Margin="0,0,0,12"/>
+
+                <TextBlock Text="TARGET AMOUNT ($)" Style="{StaticResource TxtLabel}"/>
+                <TextBox Style="{StaticResource TxtBox}"
+                         Text="{Binding TargetText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                <TextBlock Text="CURRENT SAVINGS ($)" Style="{StaticResource TxtLabel}"/>
+                <TextBox Style="{StaticResource TxtBox}"
+                         Text="{Binding CurrentText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                <TextBlock Text="TARGET DATE" Style="{StaticResource TxtLabel}"/>
+                <DatePicker SelectedDate="{Binding TargetDate}"
+                            Background="{StaticResource BgInput}" Foreground="{StaticResource TxtPrimary}"
+                            BorderBrush="{StaticResource Border}" Margin="0,0,0,18"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Height="40"
+                            Content="{Binding IsEditing, Converter={StaticResource EditLabel}}"
+                            Style="{StaticResource BtnPrimary}" Command="{Binding SaveCmd}"/>
+                    <Button Grid.Column="2" Height="40" Content="Clear" Padding="12,0"
+                            Style="{StaticResource BtnGhost}" Command="{Binding ClearCmd}"/>
+                </Grid>
+                <Button Content="Delete Selected" Style="{StaticResource BtnDanger}"
+                        Command="{Binding DeleteCmd}" Margin="0,8,0,0" Height="36"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Goals}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SmallCard}" Width="250" Margin="0,0,14,14">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding Icon}" FontSize="26" Margin="0,0,10,0"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="{StaticResource TxtPrimary}"
+                                                   FontWeight="SemiBold" FontSize="14"/>
+                                        <TextBlock Text="{Binding TargetDate, StringFormat='Target: {0:MMM yyyy}'}"
+                                                   Foreground="{StaticResource TxtSecondary}" FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Minimum="0" Maximum="100"
+                                             Style="{StaticResource PBar}" Margin="0,0,0,8"/>
+
+                                <Grid>
+                                    <TextBlock Foreground="{StaticResource TxtSecondary}" FontSize="12">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="₹{0:0.00} saved">
+                                                <Binding Path="CurrentAmount"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource Teal}" FontWeight="SemiBold"
+                                               FontSize="12" HorizontalAlignment="Right"
+                                               Text="{Binding ProgressPercent, StringFormat='{}{0:0}%'}"/>
+                                </Grid>
+                                <TextBlock Foreground="{StaticResource TxtMuted}" FontSize="11">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Goal: ₹{0:0.00}">
+                                            <Binding Path="TargetAmount"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBlock Foreground="{StaticResource Teal}" FontSize="12" Margin="0,4,0,0">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Save ₹{0:0.00}/mo">
+                                            <Binding Path="SuggestedMonthlySaving"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

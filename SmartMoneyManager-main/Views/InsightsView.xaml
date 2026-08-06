@@ -1,0 +1,96 @@
+<UserControl x:Class="SmartMoneyManager.Views.InsightsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:SmartMoneyManager.Converters">
+    <UserControl.Resources>
+        <conv:SeverityToColorConverter x:Key="SevColor"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource BgDark}">
+        <StackPanel Margin="24">
+            <TextBlock Text="Spending Insights" Style="{StaticResource TxtHeader}"/>
+
+            <!-- Insight cards -->
+            <ItemsControl ItemsSource="{Binding Insights}" Margin="0,0,0,20">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SmallCard}" Width="330" Margin="0,0,14,14">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="38"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Icon}" FontSize="26" VerticalAlignment="Top"/>
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Text="{Binding Title}"
+                                               Foreground="{Binding Severity, Converter={StaticResource SevColor}}"
+                                               FontWeight="SemiBold" FontSize="13" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Detail}"
+                                               Foreground="{StaticResource TxtSecondary}"
+                                               FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Essential vs Non-Essential -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Essential vs Non-Essential" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TxtPrimary}" Margin="0,0,0,16"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="ESSENTIAL" Style="{StaticResource TxtCardTitle}"/>
+                            <TextBlock Text="{Binding EssentialTotal, StringFormat='₹{0:0.00}'}"
+                                       FontSize="24" FontWeight="Bold" Foreground="{StaticResource Green}"/>
+                            <TextBlock Text="{Binding EssentialPct, StringFormat='{}{0:0.0}% of total'}"
+                                       Foreground="{StaticResource TxtSecondary}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="NON-ESSENTIAL" Style="{StaticResource TxtCardTitle}"/>
+                            <TextBlock Text="{Binding NonEssentialTotal, StringFormat='₹{0:0.00}'}"
+                                       FontSize="24" FontWeight="Bold" Foreground="{StaticResource Orange}"/>
+                            <TextBlock Text="{Binding NonEssentialPct, StringFormat='{}{0:0.0}% of total'}"
+                                       Foreground="{StaticResource TxtSecondary}" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Month comparison -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Month-over-Month by Category" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TxtPrimary}" Margin="0,0,0,14"/>
+                    <DataGrid ItemsSource="{Binding Comparison}"
+                              Style="{StaticResource DGrid}"
+                              ColumnHeaderStyle="{StaticResource DGridHdr}"
+                              RowStyle="{StaticResource DGridRow}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Category"   Binding="{Binding Category}"  Width="*"   IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Last Month" Width="110" IsReadOnly="True">
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="LastMonth" StringFormat="₹{0:0.00}"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="This Month" Width="110" IsReadOnly="True">
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="ThisMonth" StringFormat="₹{0:0.00}"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Change"     Binding="{Binding ChangeText}" Width="90"  IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
